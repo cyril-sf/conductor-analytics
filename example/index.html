@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="/conductor-0.3.0.js.html"></script>
+</head>
+<body>
+  <script type="text/javascript">
+    var analyticsDiv = document.createElement('div');
+    analyticsDiv.setAttribute('style', 'width: 100%;');
+    document.body.appendChild( analyticsDiv );
+
+    var conductor = new Conductor({
+        conductorURL: '../conductor-0.3.0.js.html'
+    });
+
+    var analytics = conductor.load("../card.js", 1, {
+      capabilities: ['analytics'],
+      services: {
+        analytics: Conductor.Oasis.Service
+      }
+    });
+    analytics.printWiretapEvent = function( service, messageEvent ) {
+      analytics.sandbox.capabilities.analytics.send(
+        'printWiretapEvent',
+        {service: service, event: messageEvent}
+      );
+    };
+    analytics.appendTo(analyticsDiv);
+    analytics.render('something', {width: 300, heigth: 150});
+
+    var card = conductor.load("cards/render_card.js", 1);
+
+    //TODO: figure out what should be bound when calling wiretap
+    card.wiretap( analytics.printWiretapEvent, card );
+
+    card.appendTo('body');
+    card.render();
+  </script>
+</body>
+</html>
