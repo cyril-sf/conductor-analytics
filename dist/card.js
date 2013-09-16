@@ -122,7 +122,12 @@ define("app/views/event",
 
       isVisible: function() {
         return this.get('content.eventType.isVisible') && this.get('content.eventType.service.isVisible');
-      }.property('content.eventType.isVisible', 'content.eventType.service.isVisible')
+      }.property('content.eventType.isVisible', 'content.eventType.service.isVisible'),
+
+      direction: function() {
+        console.log('direction ', this.get('content.direction'));
+        return (this.get('content.direction') === "sent" ? "→" : "←");
+      }.property('content.direction')
     });
 
 
@@ -173,7 +178,7 @@ define("templates",
       data.buffer.push("</td>\n<td>");
       hashTypes = {};
       hashContexts = {};
-      data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "view.content.direction", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+      data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "view.direction", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
       data.buffer.push("</td>\n<td>");
       hashTypes = {};
       hashContexts = {};
@@ -236,7 +241,7 @@ define("templates",
       return buffer;
       }
 
-      data.buffer.push("<table id=\"events\">\n  <thead>\n    <tr>\n      <th>Service</th>\n      <th>Direction</th>\n      <th>Event</th>\n      <th>Data</th>\n    </tr>\n  </thead>\n  ");
+      data.buffer.push("<table id=\"events\">\n  <thead>\n    <tr>\n      <th>Service</th>\n      <th></th>\n      <th>Event</th>\n      <th>Data</th>\n    </tr>\n  </thead>\n  ");
       hashTypes = {};
       hashContexts = {};
       data.buffer.push(escapeExpression(helpers.view.call(depth0, "App.EventsView", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
