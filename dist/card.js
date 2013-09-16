@@ -1,6 +1,6 @@
 define("app/application",
-  ["app/routes/index","app/controllers/index","app/views/events","app/views/event","app/models/service","app/models/event_type","app/models/event"],
-  function(IndexRoute, IndexController, EventsView, EventView, Service, EventType, Event) {
+  ["app/routes/index","app/controllers/index","app/views/events","app/models/service","app/models/event_type","app/models/event","app/models/card"],
+  function(IndexRoute, IndexController, EventsView, Service, EventType, Event, Card) {
     "use strict";
 
     var App = Ember.Application.create({
@@ -14,7 +14,6 @@ define("app/application",
     App.IndexRoute = IndexRoute;
     App.IndexController = IndexController;
     App.EventsView = EventsView;
-    App.EventView = EventView;
 
     App.Router.map( function() {
 
@@ -23,20 +22,14 @@ define("app/application",
     App.ApplicationAdapter = DS.RESTAdapter;
     App.Service = Service;
     App.EventType = EventType;
+    App.Card = Card;
     App.Event = Event;
-
-
-    App.Message = DS.Model.extend({});
-    App.Post = App.Message.extend({
-      comments: DS.hasMany('comment')
-    });
-    App.Comment = App.Message.extend({
-      message: DS.belongsTo('message', {polymorphic: true})
-    });
 
     App.deferReadiness();
     requireModule('templates');
 
+    //TODO: This is bad.
+    //I'm doing something wrong when inserting the `App.EventsView` in the `index` template
     window.App = App;
 
 
@@ -47,14 +40,29 @@ define("app/controllers/index",
   function() {
     "use strict";
     var IndexController = Ember.ArrayController.extend({
-      // itemController: 'event',
       services: function() {
         return this.store.all('service');
+      }.property('store'),
+
+      cards: function() {
+        return this.store.all('card');
       }.property('store')
     });
 
 
     return IndexController;
+  });
+define("app/models/card",
+  [],
+  function() {
+    "use strict";
+    var Card = DS.Model.extend({
+      isVisible: DS.attr('boolean', true),
+      events: DS.hasMany('event')
+    });
+
+
+    return Card;
   });
 define("app/models/event",
   [],
@@ -62,6 +70,7 @@ define("app/models/event",
     "use strict";
     var Event = DS.Model.extend({
       eventType: DS.belongsTo('eventType'),
+      card: DS.belongsTo('card'),
       direction: DS.attr(),
       data: DS.attr()
     });
@@ -121,11 +130,10 @@ define("app/views/event",
       classNames: ['event'],
 
       isVisible: function() {
-        return this.get('content.eventType.isVisible') && this.get('content.eventType.service.isVisible');
-      }.property('content.eventType.isVisible', 'content.eventType.service.isVisible'),
+        return this.get('content.eventType.isVisible') && this.get('content.eventType.service.isVisible') && this.get('content.card.isVisible');
+      }.property('content.eventType.isVisible', 'content.eventType.service.isVisible', 'content.card.isVisible'),
 
       direction: function() {
-        console.log('direction ', this.get('content.direction'));
         return (this.get('content.direction') === "sent" ? "→" : "←");
       }.property('content.direction')
     });
@@ -241,6 +249,26 @@ define("templates",
       return buffer;
       }
 
+    function program4(depth0,data) {
+  
+      var buffer = '', stack1, hashContexts, hashTypes, options;
+      data.buffer.push("\n    <tr class=\"card\">\n      <td>");
+      hashContexts = {'type': depth0,'name': depth0,'checked': depth0};
+      hashTypes = {'type': "STRING",'name': "ID",'checked': "ID"};
+      options = {hash:{
+        'type': ("checkbox"),
+        'name': ("card.id"),
+        'checked': ("card.isVisible")
+      },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+      data.buffer.push(escapeExpression(((stack1 = helpers.input || depth0.input),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "input", options))));
+      data.buffer.push("</td>\n      <td>");
+      hashTypes = {};
+      hashContexts = {};
+      data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "card.id", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+      data.buffer.push("</td>\n    </tr>\n  ");
+      return buffer;
+      }
+
       data.buffer.push("<table id=\"events\">\n  <thead>\n    <tr>\n      <th>Service</th>\n      <th></th>\n      <th>Event</th>\n      <th>Data</th>\n    </tr>\n  </thead>\n  ");
       hashTypes = {};
       hashContexts = {};
@@ -250,12 +278,17 @@ define("templates",
       hashContexts = {};
       stack1 = helpers.each.call(depth0, "service", "in", "controller.services", {hash:{},inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
       if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-      data.buffer.push("\n  </tbody>\n</ul>\n");
+      data.buffer.push("\n  </tbody>\n</table>\n\n<table id=\"cards`\">\n  <thead>\n    <tr>\n      <th colspan=2>Card</th>\n    </tr>\n  </thead>\n  <tbody>\n  ");
+      hashTypes = {};
+      hashContexts = {};
+      stack1 = helpers.each.call(depth0, "card", "in", "controller.cards", {hash:{},inverse:self.noop,fn:self.program(4, program4, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+      if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+      data.buffer.push("\n  </tbody>\n</table>\n");
       return buffer;
   
     });
   });
-/*global Conductor, $, App, oasis */
+/*global Conductor, $, oasis */
 
 Conductor.require('loader.js');
 Conductor.require('jquery.js');
@@ -321,8 +354,10 @@ Conductor.card( {
     this.App = requireModule('app/application');
   },
 
-  createEvent: function(service, event) {
-    var store = this.App.__container__.lookup('store:main');
+  createEvent: function(service, event, cardId) {
+    var App = this.App,
+        store = App.__container__.lookup('store:main'),
+        card;
 
     if( store.hasRecordForId(App.Service, service) ) {
       service = store.recordForId(App.Service, service);
@@ -344,10 +379,20 @@ Conductor.card( {
       });
     }
 
-    eventType.get('events').createRecord({
+    event = eventType.get('events').createRecord({
       direction: event.direction,
       data: (JSON.stringify(event.data) || "").slice(0, 20)
     });
+
+    if( store.hasRecordForId(App.Card, cardId) ) {
+      card = store.recordForId(App.Card, cardId);
+    } else {
+      card = store.createRecord('card', {
+        id: cardId,
+        isVisible: true
+      });
+    }
+    event.set('card', card);
   },
 
   consumers: {
@@ -357,11 +402,12 @@ Conductor.card( {
         printWiretapEvent: function(data) {
           var card = this.card,
               service = data.service,
-              event = data.event;
+              event = data.event,
+              cardId = data.card;
 
           card.waitForActivation().then( function() {
             card.App.readyPromise.promise.then( function() {
-              card.createEvent(service, event);
+              card.createEvent(service, event, cardId);
             });
           });
         }

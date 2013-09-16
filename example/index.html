@@ -6,7 +6,6 @@
 <body>
   <script type="text/javascript">
     var analyticsDiv = document.createElement('div');
-    analyticsDiv.setAttribute('style', 'width: 100%;');
     document.body.appendChild( analyticsDiv );
 
     var conductor = new Conductor({
@@ -22,7 +21,7 @@
     analytics.printWiretapEvent = function( service, messageEvent ) {
       analytics.sandbox.capabilities.analytics.send(
         'printWiretapEvent',
-        {service: service, event: messageEvent}
+        {service: service, event: messageEvent, card: this.sandbox.name()}
       );
     };
     analytics.appendTo(analyticsDiv);
