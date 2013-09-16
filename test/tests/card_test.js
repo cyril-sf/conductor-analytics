@@ -8,10 +8,6 @@ module("Card loading", {
       testing: true,
       conductorURL: 'conductor-0.3.0.js.html'
     });
-  },
-
-  teardown: function() {
-    this.clock.restore();
   }
 });
 
