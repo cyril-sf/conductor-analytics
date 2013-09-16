@@ -4,8 +4,6 @@ var conductor, card;
 
 module("Card loading", {
   setup: function() {
-    this.clock = sinon.useFakeTimers();
-
     conductor = new Conductor({
       testing: true,
       conductorURL: 'conductor-0.3.0.js.html'

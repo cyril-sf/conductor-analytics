@@ -118,6 +118,7 @@ define("app/views/event",
     var EventView = Ember.View.extend({
       templateName: 'event',
       tagName: 'tr',
+      classNames: ['event'],
 
       isVisible: function() {
         return this.get('content.eventType.isVisible') && this.get('content.eventType.service.isVisible');
@@ -249,7 +250,7 @@ define("templates",
   
     });
   });
-/*global Conductor */
+/*global Conductor, $, App, oasis */
 
 Conductor.require('loader.js');
 Conductor.require('jquery.js');
@@ -259,8 +260,7 @@ Conductor.require('ember-data.js');
 
 var DomConsumer = Conductor.Oasis.Consumer.extend({
   _wait: function(card) {
-    var promise, obj = {}, helperName,
-        card = card;
+    var promise, obj = {}, helperName;
 
     return new Conductor.Oasis.RSVP.Promise(function(resolve) {
       var watcher = setInterval(function() {

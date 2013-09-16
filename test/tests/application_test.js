@@ -1,3 +1,4 @@
+/*global visit, find */
 import App from 'app/application';
 
 var qunitFixture = document.getElementById('qunit-fixture');
