@@ -321,6 +321,35 @@ Conductor.card( {
     this.App = requireModule('app/application');
   },
 
+  createEvent: function(service, event) {
+    var store = this.App.__container__.lookup('store:main');
+
+    if( store.hasRecordForId(App.Service, service) ) {
+      service = store.recordForId(App.Service, service);
+    } else {
+      service = store.createRecord('service', {
+        id: service,
+        isVisible: true
+      });
+    }
+
+    var eventTypes = service.get('eventTypes'),
+        eventType = eventTypes.map( function(eventType) {
+          return eventType.id === event.type;
+        }).objectAt(0);
+    if( !eventType ) {
+      eventType = eventTypes.createRecord({
+        id: event.type,
+        isVisible: true
+      });
+    }
+
+    eventType.get('events').createRecord({
+      direction: event.direction,
+      data: (JSON.stringify(event.data) || "").slice(0, 20)
+    });
+  },
+
   consumers: {
     dom: DomConsumer,
     analytics: Conductor.Oasis.Consumer.extend({
@@ -330,36 +359,9 @@ Conductor.card( {
               service = data.service,
               event = data.event;
 
-              window.card = card;
-
           card.waitForActivation().then( function() {
             card.App.readyPromise.promise.then( function() {
-              var store = card.App.__container__.lookup('store:main');
-
-              if( store.hasRecordForId(App.Service, service) ) {
-                service = store.recordForId(App.Service, service);
-              } else {
-                service = store.createRecord('service', {
-                  id: service,
-                  isVisible: true
-                });
-              }
-
-              var eventTypes = service.get('eventTypes'),
-                  eventType = eventTypes.map( function(eventType) {
-                    return eventType.id === event.type;
-                  }).objectAt(0);
-              if( !eventType ) {
-                eventType = eventTypes.createRecord({
-                  id: event.type,
-                  isVisible: true
-                });
-              }
-
-              eventType.get('events').createRecord({
-                direction: event.direction,
-                data: (JSON.stringify(event.data) || "").slice(0, 20)
-              });
+              card.createEvent(service, event);
             });
           });
         }
