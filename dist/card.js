@@ -1,6 +1,6 @@
 define("app/application",
-  ["app/routes/index","app/controllers/index","app/views/events","app/models/service","app/models/event_type","app/models/event","app/models/card"],
-  function(IndexRoute, IndexController, EventsView, Service, EventType, Event, Card) {
+  ["app/routes/index","app/controllers/index","app/controllers/services","app/controllers/cards","app/views/events","app/models/service","app/models/event_type","app/models/event","app/models/card"],
+  function(IndexRoute, IndexController, ServicesController, CardsController, EventsView, Service, EventType, Event, Card) {
     "use strict";
 
     var App = Ember.Application.create({
@@ -13,6 +13,8 @@ define("app/application",
 
     App.IndexRoute = IndexRoute;
     App.IndexController = IndexController;
+    App.ServicesController = ServicesController;
+    App.CardsController = CardsController;
     App.EventsView = EventsView;
 
     App.Router.map( function() {
@@ -35,6 +37,16 @@ define("app/application",
 
     return App;
   });
+define("app/controllers/cards",
+  [],
+  function() {
+    "use strict";
+    var CardsController = Ember.ArrayController.extend({
+    });
+
+
+    return CardsController;
+  });
 define("app/controllers/index",
   [],
   function() {
@@ -51,6 +63,16 @@ define("app/controllers/index",
 
 
     return IndexController;
+  });
+define("app/controllers/services",
+  [],
+  function() {
+    "use strict";
+    var ServicesController = Ember.ArrayController.extend({
+    });
+
+
+    return ServicesController;
   });
 define("app/models/card",
   [],
@@ -110,10 +132,29 @@ define("app/routes/index",
     var IndexRoute = Ember.Route.extend({
       setupController: function(controller, model) {
         controller.set('model', model);
+
+        this.controllerFor('services').set('model', this.store.all('service') );
+        this.controllerFor('cards').set('model', this.store.all('card') );
       },
 
       model: function() {
         return this.store.all('event');
+      },
+
+      renderTemplate: function() {
+        this.render();
+
+        this.render('services', {
+          into: 'index',
+          outlet: 'services',
+          controller: 'services'
+        });
+
+        this.render('cards', {
+          into: 'index',
+          outlet: 'cards',
+          controller: 'cards'
+        });
       }
     });
 
@@ -173,6 +214,41 @@ define("templates",
   
     });
 
+    Ember.TEMPLATES["cards"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
+    this.compilerInfo = [4,'>= 1.0.0'];
+    helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
+      var buffer = '', stack1, hashTypes, hashContexts, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, self=this;
+
+    function program1(depth0,data) {
+  
+      var buffer = '', stack1, hashContexts, hashTypes, options;
+      data.buffer.push("\n    <tr class=\"card\">\n      <td>");
+      hashContexts = {'type': depth0,'name': depth0,'checked': depth0};
+      hashTypes = {'type': "STRING",'name': "ID",'checked': "ID"};
+      options = {hash:{
+        'type': ("checkbox"),
+        'name': ("card.id"),
+        'checked': ("card.isVisible")
+      },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+      data.buffer.push(escapeExpression(((stack1 = helpers.input || depth0.input),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "input", options))));
+      data.buffer.push("</td>\n      <td>");
+      hashTypes = {};
+      hashContexts = {};
+      data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "card.id", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+      data.buffer.push("</td>\n    </tr>\n  ");
+      return buffer;
+      }
+
+      data.buffer.push("<table id=\"cards`\">\n  <thead>\n    <tr>\n      <th colspan=2>Card</th>\n    </tr>\n  </thead>\n  <tbody>\n  ");
+      hashTypes = {};
+      hashContexts = {};
+      stack1 = helpers.each.call(depth0, "card", "in", "controller", {hash:{},inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+      if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
+      data.buffer.push("\n  </tbody>\n</table>\n");
+      return buffer;
+  
+    });
+
     Ember.TEMPLATES["event"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
     this.compilerInfo = [4,'>= 1.0.0'];
     helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
@@ -201,6 +277,31 @@ define("templates",
     });
 
     Ember.TEMPLATES["index"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
+    this.compilerInfo = [4,'>= 1.0.0'];
+    helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
+      var buffer = '', stack1, hashTypes, hashContexts, options, escapeExpression=this.escapeExpression, helperMissing=helpers.helperMissing;
+
+
+      data.buffer.push("<table id=\"events\">\n  <thead>\n    <tr>\n      <th>Service</th>\n      <th></th>\n      <th>Event</th>\n      <th>Data</th>\n    </tr>\n  </thead>\n  ");
+      hashTypes = {};
+      hashContexts = {};
+      data.buffer.push(escapeExpression(helpers.view.call(depth0, "App.EventsView", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+      data.buffer.push("\n</table>\n\n");
+      hashTypes = {};
+      hashContexts = {};
+      options = {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+      data.buffer.push(escapeExpression(((stack1 = helpers.outlet || depth0.outlet),stack1 ? stack1.call(depth0, "services", options) : helperMissing.call(depth0, "outlet", "services", options))));
+      data.buffer.push("\n\n");
+      hashTypes = {};
+      hashContexts = {};
+      options = {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+      data.buffer.push(escapeExpression(((stack1 = helpers.outlet || depth0.outlet),stack1 ? stack1.call(depth0, "cards", options) : helperMissing.call(depth0, "outlet", "cards", options))));
+      data.buffer.push("\n");
+      return buffer;
+  
+    });
+
+    Ember.TEMPLATES["services"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
     this.compilerInfo = [4,'>= 1.0.0'];
     helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
       var buffer = '', stack1, hashTypes, hashContexts, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression, self=this;
@@ -249,39 +350,10 @@ define("templates",
       return buffer;
       }
 
-    function program4(depth0,data) {
-  
-      var buffer = '', stack1, hashContexts, hashTypes, options;
-      data.buffer.push("\n    <tr class=\"card\">\n      <td>");
-      hashContexts = {'type': depth0,'name': depth0,'checked': depth0};
-      hashTypes = {'type': "STRING",'name': "ID",'checked': "ID"};
-      options = {hash:{
-        'type': ("checkbox"),
-        'name': ("card.id"),
-        'checked': ("card.isVisible")
-      },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
-      data.buffer.push(escapeExpression(((stack1 = helpers.input || depth0.input),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "input", options))));
-      data.buffer.push("</td>\n      <td>");
+      data.buffer.push("<table id=\"filter_services\">\n  <thead>\n    <tr>\n      <th colspan=2>Service</th>\n      <th> Event Type</th>\n    </tr>\n  </thead>\n  <tbody>\n  ");
       hashTypes = {};
       hashContexts = {};
-      data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "card.id", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-      data.buffer.push("</td>\n    </tr>\n  ");
-      return buffer;
-      }
-
-      data.buffer.push("<table id=\"events\">\n  <thead>\n    <tr>\n      <th>Service</th>\n      <th></th>\n      <th>Event</th>\n      <th>Data</th>\n    </tr>\n  </thead>\n  ");
-      hashTypes = {};
-      hashContexts = {};
-      data.buffer.push(escapeExpression(helpers.view.call(depth0, "App.EventsView", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-      data.buffer.push("\n</table>\n\n<table id=\"filter_services\">\n  <thead>\n    <tr>\n      <th colspan=2>Service</th>\n      <th> Event Type</th>\n    </tr>\n  </thead>\n  <tbody>\n  ");
-      hashTypes = {};
-      hashContexts = {};
-      stack1 = helpers.each.call(depth0, "service", "in", "controller.services", {hash:{},inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
-      if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
-      data.buffer.push("\n  </tbody>\n</table>\n\n<table id=\"cards`\">\n  <thead>\n    <tr>\n      <th colspan=2>Card</th>\n    </tr>\n  </thead>\n  <tbody>\n  ");
-      hashTypes = {};
-      hashContexts = {};
-      stack1 = helpers.each.call(depth0, "card", "in", "controller.cards", {hash:{},inverse:self.noop,fn:self.program(4, program4, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
+      stack1 = helpers.each.call(depth0, "service", "in", "controller", {hash:{},inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
       if(stack1 || stack1 === 0) { data.buffer.push(stack1); }
       data.buffer.push("\n  </tbody>\n</table>\n");
       return buffer;

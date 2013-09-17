@@ -1,0 +1,15 @@
+<table id="cards`">
+  <thead>
+    <tr>
+      <th colspan=2>Card</th>
+    </tr>
+  </thead>
+  <tbody>
+  {{#each card in controller}}
+    <tr class="card">
+      <td>{{input type="checkbox" name=card.id checked=card.isVisible}}</td>
+      <td>{{card.id}}</td>
+    </tr>
+  {{/each}}
+  </tbody>
+</table>

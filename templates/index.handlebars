@@ -10,45 +10,6 @@
   {{ view App.EventsView }}
 </table>
 
-<table id="filter_services">
-  <thead>
-    <tr>
-      <th colspan=2>Service</th>
-      <th> Event Type</th>
-    </tr>
-  </thead>
-  <tbody>
-  {{#each service in controller.services}}
-    <tr>
-      <td>{{input type="checkbox" name=service.id checked=service.isVisible}}</td>
-      <td>{{service.id}}</td>
-      <td>
-        <table>
-          {{#each eventType in service.eventTypes}}
-          <tr>
-            <td>{{input type="checkbox" name=eventType.id checked=eventType.isVisible}}</td>
-            <td>{{eventType.id}}</td>
-          </tr>
-          {{/each}}
-        </table>
-      </td>
-    </tr>
-  {{/each}}
-  </tbody>
-</table>
+{{ outlet 'services' }}
 
-<table id="cards`">
-  <thead>
-    <tr>
-      <th colspan=2>Card</th>
-    </tr>
-  </thead>
-  <tbody>
-  {{#each card in controller.cards}}
-    <tr class="card">
-      <td>{{input type="checkbox" name=card.id checked=card.isVisible}}</td>
-      <td>{{card.id}}</td>
-    </tr>
-  {{/each}}
-  </tbody>
-</table>
+{{ outlet 'cards' }}

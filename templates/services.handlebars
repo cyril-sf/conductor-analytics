@@ -1,0 +1,26 @@
+<table id="filter_services">
+  <thead>
+    <tr>
+      <th colspan=2>Service</th>
+      <th> Event Type</th>
+    </tr>
+  </thead>
+  <tbody>
+  {{#each service in controller}}
+    <tr>
+      <td>{{input type="checkbox" name=service.id checked=service.isVisible}}</td>
+      <td>{{service.id}}</td>
+      <td>
+        <table>
+          {{#each eventType in service.eventTypes}}
+          <tr>
+            <td>{{input type="checkbox" name=eventType.id checked=eventType.isVisible}}</td>
+            <td>{{eventType.id}}</td>
+          </tr>
+          {{/each}}
+        </table>
+      </td>
+    </tr>
+  {{/each}}
+  </tbody>
+</table>
