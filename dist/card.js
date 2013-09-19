@@ -1,6 +1,6 @@
 define("app/application",
-  ["app/routes/index","app/controllers/index","app/controllers/services","app/controllers/cards","app/views/events","app/models/service","app/models/event_type","app/models/event","app/models/card"],
-  function(IndexRoute, IndexController, ServicesController, CardsController, EventsView, Service, EventType, Event, Card) {
+  ["app/routes/index","app/controllers/index","app/controllers/services","app/controllers/cards","app/views/events","app/views/event","app/models/service","app/models/event_type","app/models/event","app/models/card"],
+  function(IndexRoute, IndexController, ServicesController, CardsController, EventsView, EventView, Service, EventType, Event, Card) {
     "use strict";
 
     var App = Ember.Application.create({
@@ -16,6 +16,7 @@ define("app/application",
     App.ServicesController = ServicesController;
     App.CardsController = CardsController;
     App.EventsView = EventsView;
+    App.EventView = EventView;
 
     App.Router.map( function() {
 
@@ -90,11 +91,34 @@ define("app/models/event",
   [],
   function() {
     "use strict";
+    // Pad a single-digit number with a zero, if necessary.
+    // zeroPad(3)  => "03"
+    // zeroPad(10) => "10"
+    function zeroPad(number) {
+      number = number+'';
+      if (number.length === 1) {
+        return "0"+number;
+      }
+      return number;
+    }
+
     var Event = DS.Model.extend({
       eventType: DS.belongsTo('eventType'),
       card: DS.belongsTo('card'),
       direction: DS.attr(),
-      data: DS.attr()
+      data: DS.attr(),
+      time: DS.attr('date'),
+
+      formattedTime: function() {
+        var date = this.get('time'),
+            year = date.getFullYear(),
+            month = zeroPad(date.getMonth()+1),
+            day = zeroPad(date.getDate()),
+            hour = zeroPad(date.getHours()),
+            minute = zeroPad(date.getMinutes());
+
+        return "%@-%@-%@ %@:%@ ".fmt(year, month, day, hour, minute);
+      }.property('time')
     });
 
 
@@ -239,7 +263,7 @@ define("templates",
       return buffer;
       }
 
-      data.buffer.push("<table id=\"cards`\">\n  <thead>\n    <tr>\n      <th colspan=2>Card</th>\n    </tr>\n  </thead>\n  <tbody>\n  ");
+      data.buffer.push("<table>\n  <thead>\n    <tr>\n      <th colspan=2>Card</th>\n    </tr>\n  </thead>\n  <tbody>\n  ");
       hashTypes = {};
       hashContexts = {};
       stack1 = helpers.each.call(depth0, "card", "in", "controller", {hash:{},inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
@@ -255,19 +279,23 @@ define("templates",
       var buffer = '', hashTypes, hashContexts, escapeExpression=this.escapeExpression;
 
 
-      data.buffer.push("<td>");
+      data.buffer.push("<td class=\"time\">");
+      hashTypes = {};
+      hashContexts = {};
+      data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "view.content.formattedTime", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+      data.buffer.push("</td>\n<td class=\"service\">");
       hashTypes = {};
       hashContexts = {};
       data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "view.content.eventType.service.id", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-      data.buffer.push("</td>\n<td>");
+      data.buffer.push("</td>\n<td class=\"direction\">");
       hashTypes = {};
       hashContexts = {};
       data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "view.direction", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-      data.buffer.push("</td>\n<td>");
+      data.buffer.push("</td>\n<td class=\"event\">");
       hashTypes = {};
       hashContexts = {};
       data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "view.content.eventType.id", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-      data.buffer.push("</td>\n<td>");
+      data.buffer.push("</td>\n<td class=\"data\">");
       hashTypes = {};
       hashContexts = {};
       data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "view.content.data", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
@@ -279,24 +307,27 @@ define("templates",
     Ember.TEMPLATES["index"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
     this.compilerInfo = [4,'>= 1.0.0'];
     helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
-      var buffer = '', stack1, hashTypes, hashContexts, options, escapeExpression=this.escapeExpression, helperMissing=helpers.helperMissing;
+      var buffer = '', stack1, hashContexts, hashTypes, options, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
 
 
-      data.buffer.push("<table id=\"events\">\n  <thead>\n    <tr>\n      <th>Service</th>\n      <th></th>\n      <th>Event</th>\n      <th>Data</th>\n    </tr>\n  </thead>\n  ");
-      hashTypes = {};
-      hashContexts = {};
-      data.buffer.push(escapeExpression(helpers.view.call(depth0, "App.EventsView", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-      data.buffer.push("\n</table>\n\n");
+      data.buffer.push("<div id=\"events\">\n<table>\n  <thead>\n    <tr>\n      <th class=\"time\">Time</th>\n      <th class=\"service\">Service</th>\n      <th class=\"direction\"></th>\n      <th class=\"event\">Event</th>\n      <th class=\"data\">Data</th>\n    </tr>\n  </thead>\n  ");
+      hashContexts = {'contentBinding': depth0};
+      hashTypes = {'contentBinding': "STRING"};
+      options = {hash:{
+        'contentBinding': ("controller")
+      },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
+      data.buffer.push(escapeExpression(((stack1 = helpers.collection || depth0.collection),stack1 ? stack1.call(depth0, "App.EventsView", options) : helperMissing.call(depth0, "collection", "App.EventsView", options))));
+      data.buffer.push("\n</table>\n</div>\n\n<div id=\"services\">\n");
       hashTypes = {};
       hashContexts = {};
       options = {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
       data.buffer.push(escapeExpression(((stack1 = helpers.outlet || depth0.outlet),stack1 ? stack1.call(depth0, "services", options) : helperMissing.call(depth0, "outlet", "services", options))));
-      data.buffer.push("\n\n");
+      data.buffer.push("\n</div>\n\n<div id=\"cards\">\n");
       hashTypes = {};
       hashContexts = {};
       options = {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
       data.buffer.push(escapeExpression(((stack1 = helpers.outlet || depth0.outlet),stack1 ? stack1.call(depth0, "cards", options) : helperMissing.call(depth0, "outlet", "cards", options))));
-      data.buffer.push("\n");
+      data.buffer.push("\n</div>\n");
       return buffer;
   
     });
@@ -350,7 +381,7 @@ define("templates",
       return buffer;
       }
 
-      data.buffer.push("<table id=\"filter_services\">\n  <thead>\n    <tr>\n      <th colspan=2>Service</th>\n      <th> Event Type</th>\n    </tr>\n  </thead>\n  <tbody>\n  ");
+      data.buffer.push("<table>\n  <thead>\n    <tr>\n      <th colspan=2>Service</th>\n      <th> Event Type</th>\n    </tr>\n  </thead>\n  <tbody>\n  ");
       hashTypes = {};
       hashContexts = {};
       stack1 = helpers.each.call(depth0, "service", "in", "controller", {hash:{},inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});
@@ -367,6 +398,7 @@ Conductor.require('jquery.js');
 Conductor.require('handlebars.js');
 Conductor.require('ember.js');
 Conductor.require('ember-data.js');
+Conductor.requireCSS('style.css');
 
 var DomConsumer = Conductor.Oasis.Consumer.extend({
   _wait: function(card) {
@@ -426,7 +458,7 @@ Conductor.card( {
     this.App = requireModule('app/application');
   },
 
-  createEvent: function(service, event, cardId) {
+  createEvent: function(time, service, event, cardId) {
     var App = this.App,
         store = App.__container__.lookup('store:main'),
         card;
@@ -441,9 +473,7 @@ Conductor.card( {
     }
 
     var eventTypes = service.get('eventTypes'),
-        eventType = eventTypes.map( function(eventType) {
-          return eventType.id === event.type;
-        }).objectAt(0);
+        eventType = eventTypes.findBy('id', event.type);
     if( !eventType ) {
       eventType = eventTypes.createRecord({
         id: event.type,
@@ -453,7 +483,8 @@ Conductor.card( {
 
     event = eventType.get('events').createRecord({
       direction: event.direction,
-      data: (JSON.stringify(event.data) || "").slice(0, 20)
+      data: (JSON.stringify(event.data) || ""),
+      time: time
     });
 
     if( store.hasRecordForId(App.Card, cardId) ) {
@@ -475,11 +506,12 @@ Conductor.card( {
           var card = this.card,
               service = data.service,
               event = data.event,
-              cardId = data.card;
+              cardId = data.card,
+              time = data.time;
 
           card.waitForActivation().then( function() {
             card.App.readyPromise.promise.then( function() {
-              card.createEvent(service, event, cardId);
+              card.createEvent(time, service, event, cardId);
             });
           });
         }

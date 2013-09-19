@@ -1,0 +1,46 @@
+.time {
+  color: #aa0;
+  white-space: nowrap;
+  min-width: 120px;
+}
+
+.service {
+  text-align: right;
+  color: #4866ff;
+  min-width: 60px;
+}
+
+.direction {
+  text-align: center;
+  color: #0aa;
+  min-width: 20px;
+}
+
+.event {
+  text-align: left;
+  color: #a0a;
+  min-width: 100px;
+}
+
+.data {
+  text-align: left;
+  color: #aaa;
+  white-space: nowrap;
+}
+
+#services,
+#cards {
+  display: inline-block;
+  float: right;
+  position: fixed;
+  right: 0px;
+  background-color: white;
+}
+
+#services {
+  top: 0px;
+}
+
+#cards {
+  bottom: 0px;
+}

@@ -1,15 +1,22 @@
-<table id="events">
+<div id="events">
+<table>
   <thead>
     <tr>
-      <th>Service</th>
-      <th></th>
-      <th>Event</th>
-      <th>Data</th>
+      <th class="time">Time</th>
+      <th class="service">Service</th>
+      <th class="direction"></th>
+      <th class="event">Event</th>
+      <th class="data">Data</th>
     </tr>
   </thead>
-  {{ view App.EventsView }}
+  {{collection App.EventsView contentBinding='controller'}}
 </table>
+</div>
 
+<div id="services">
 {{ outlet 'services' }}
+</div>
 
+<div id="cards">
 {{ outlet 'cards' }}
+</div>

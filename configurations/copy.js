@@ -1,4 +1,11 @@
 module.exports = {
+  css: {
+    cwd: 'lib',
+    expand: true,
+    src: ['*.css'],
+    dest: 'dist/'
+  },
+
   card: {
     files: [
     {
@@ -8,6 +15,7 @@ module.exports = {
         dest: 'tmp/public/'
     }
   ]},
+
   test: {
     files: [
       {
@@ -17,6 +25,7 @@ module.exports = {
         dest: 'tmp/public'
     }
   ]},
+
   vendor: {
     files: [
       {
