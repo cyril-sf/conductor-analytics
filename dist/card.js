@@ -5,7 +5,7 @@ define("app/application",
 
     var App = Ember.Application.create({
       readyPromise: Ember.RSVP.defer(),
-      rootElement: '#card',
+      rootElement: '#analytics',
       ready: function() {
         this.readyPromise.resolve();
       }
@@ -398,7 +398,7 @@ Conductor.require('jquery.js');
 Conductor.require('handlebars.js');
 Conductor.require('ember.js');
 Conductor.require('ember-data.js');
-Conductor.requireCSS('style.css');
+Conductor.requireCSS('conductor-analytics.css');
 
 var DomConsumer = Conductor.Oasis.Consumer.extend({
   _wait: function(card) {
@@ -448,7 +448,7 @@ Conductor.card( {
   App: null,
 
   initializeDOM: function () {
-    document.body.innerHTML = "<div id=\"card\"></div>";
+    document.body.innerHTML = "<div id=\"analytics\"></div>";
     this.App.advanceReadiness();
   },
 

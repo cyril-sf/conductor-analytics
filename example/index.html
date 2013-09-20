@@ -2,35 +2,28 @@
 <html>
 <head>
   <script src="/conductor-0.3.0.js.html"></script>
+  <link rel="stylesheet" href="../conductor-analytics.css">
+  <script type="text/javascript" src="../conductor-analytics-bootstrap.js"></script>
 </head>
 <body>
-  <script type="text/javascript">
-    var analyticsDiv = document.createElement('div');
-    document.body.appendChild( analyticsDiv );
 
+    <div class="analytics">
+      <div class="tab">Analytics</div>
+      <div class="panel">
+        <pre class="output"></pre>
+      </div>
+    </div>
+
+  <script type="text/javascript">
     var conductor = new Conductor({
         conductorURL: '../conductor-0.3.0.js.html'
     });
 
-    var analytics = conductor.load("../card.js", 1, {
-      capabilities: ['analytics'],
-      services: {
-        analytics: Conductor.Oasis.Service
-      }
-    });
-    analytics.printWiretapEvent = function( service, messageEvent ) {
-      analytics.sandbox.capabilities.analytics.send(
-        'printWiretapEvent',
-        {service: service, event: messageEvent, card: this.sandbox.name()}
-      );
-    };
-    analytics.appendTo(analyticsDiv);
-    analytics.render('something', {width: 300, heigth: 150});
+    var analyticsCard = initializeConductorAnalytics( conductor, "../card.js" );
 
     var card = conductor.load("cards/render_card.js", 1);
 
-    //TODO: figure out what should be bound when calling wiretap
-    card.wiretap( analytics.printWiretapEvent, card );
+    analyticsCard.track( card );
 
     card.appendTo('body');
     card.render();

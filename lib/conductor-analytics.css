@@ -1,0 +1,112 @@
+.analytics {
+  position: fixed;
+  bottom: -380px;
+  right: 0;
+  left: 0;
+
+  height: 400px;
+
+  -webkit-transition: bottom 0.2s ease-out;
+}
+
+.analytics.showing {
+  bottom: 0;
+}
+
+.analytics .tab {
+  width: 130px;
+  height: 16px;
+
+  margin-left: 7px;
+  padding: 4px 13px 0 13px;
+
+  border-radius: 3px 3px 0 0;
+
+  color: #eee;
+  background-color: rgba(0,0,0,0.9);
+
+  font-size: 14px;
+  text-align: center;
+  -webkit-font-smoothing: antialiased;
+
+  cursor: pointer;
+}
+
+.analytics .panel {
+  position: relative;
+
+  height: 380px;
+  width: 100%;
+
+  color: #eee;
+  background-color: rgba(0,0,0,0.9);
+}
+
+.analytics iframe {
+  width: 100%;
+  height: 100%;
+}
+
+.analytics .output {
+  position: absolute;
+
+  top: 10px;
+  right: 10px;
+  bottom: 10px;
+  left: 10px;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  border-radius: 2px;
+
+  font-family: "Menlo", Consolas, monaco, monospace;)
+}
+
+/* This section describes the content of the card */
+#analytics .time {
+  color: #aa0;
+  white-space: nowrap;
+  min-width: 120px;
+}
+
+#analytics .service {
+  text-align: right;
+  color: #4866ff;
+  min-width: 60px;
+}
+
+#analytics .direction {
+  text-align: center;
+  color: #0aa;
+  min-width: 20px;
+}
+
+#analytics .event {
+  text-align: left;
+  color: #a0a;
+  min-width: 100px;
+}
+
+#analytics .data {
+  text-align: left;
+  color: #aaa;
+  white-space: nowrap;
+}
+
+#analytics #services,
+#analytics #cards {
+  display: inline-block;
+  float: right;
+  position: fixed;
+  right: 0px;
+  background-color: white;
+}
+
+#analytics #services {
+  top: 0px;
+}
+
+#analytics #cards {
+  bottom: 0px;
+}
