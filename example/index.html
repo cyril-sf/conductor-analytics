@@ -4,6 +4,7 @@
   <script src="/conductor-0.3.0.js.html"></script>
   <link rel="stylesheet" href="../conductor-analytics.css">
   <script type="text/javascript" src="../conductor-analytics-bootstrap.js"></script>
+  <script type="text/javascript" src="../jquery.js"></script>
 </head>
 <body>
 
@@ -19,7 +20,8 @@
         conductorURL: '../conductor-0.3.0.js.html'
     });
 
-    var analyticsCard = initializeConductorAnalytics( conductor, "../card.js" );
+    initializeAnalyticsTab();
+    var analyticsCard = initializeConductorAnalytics( conductor, "../card.js", ".output" );
 
     var card = conductor.load("cards/render_card.js", 1);
 

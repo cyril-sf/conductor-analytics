@@ -11,6 +11,25 @@
 
 * Copy the content of the `dist` folder in your project
 * Make sure that the dependencies are available in the same folder
+* Insert the boostrap file `conductor-analytics-bootstrap.js` in your page.
+* Add the analytics card in your app before adding card to your conductor instance.
+
+```js
+    var analyticsCard = window.initializeConductorAnalytics(
+        this.conductor,
+        "../cards/conductor-analytics/card.js",
+        '.analytics .panel .output'
+      );
+```
+
+* When adding a card to conductor, wiretap it to the analytics card
+
+```js
+    analyticsCard.track( card );
+```
+
+The bootstrap comes with a default UI that adds a tab at the bottom of the page.
+
 * Insert this html at the end of your page
 
 ```
@@ -23,20 +42,10 @@
 ```
 
 * Insert the stylesheet `conductor-analytics.css` in your page.
-* Add the analytics card in your app before adding card to your conductor instance.
-
-TODO: card path, DOM element
-```js
-    var analyticsCard = window.initializeConductorAnalytics(
-        this.conductor,
-        "../cards/conductor-analytics/card.js"
-      );
-```
-
-* When adding a card, wiretap it to the analytics card
+* Initialize the UI:
 
 ```js
-    analyticsCard.track( card );
+    window.initializeAnalyticsTab();
 ```
 
 # Building Conductor.js Analytics card
