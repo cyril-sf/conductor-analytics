@@ -1,22 +1,28 @@
 <div id="events">
-<table>
-  <thead>
-    <tr>
-      <th class="time">Time</th>
-      <th class="service">Service</th>
-      <th class="direction"></th>
-      <th class="event">Event</th>
-      <th class="data">Data</th>
-    </tr>
-  </thead>
-  {{collection App.EventsView contentBinding='controller'}}
-</table>
+  <table>
+    <thead>
+      <tr>
+        <th class="time">Time</th>
+        <th class="service">Service</th>
+        <th class="direction"></th>
+        <th class="event">Event</th>
+        <th class="data">Data</th>
+      </tr>
+    </thead>
+    {{collection App.EventsView contentBinding='controller'}}
+  </table>
 </div>
 
-<div id="services">
-{{ outlet 'services' }}
+<div class="filters">
+  <div class="filter">
+  {{ outlet 'services' }}
+  </div>
+
+  <div class="filter">
+  {{ outlet 'cards' }}
+  </div>
 </div>
 
-<div id="cards">
-{{ outlet 'cards' }}
+<div class="menu">
+  <a {{action 'toggleFilters'}}>Filters</a>
 </div>

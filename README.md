@@ -41,7 +41,7 @@ The bootstrap comes with a default UI that adds a tab at the bottom of the page.
     </div>
 ```
 
-* Insert the stylesheet `conductor-analytics.css` in your page.
+* Insert the stylesheet `conductor-analytics-bootstrap.css` in your page.
 * Initialize the UI:
 
 ```js

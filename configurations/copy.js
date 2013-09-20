@@ -1,8 +1,8 @@
 module.exports = {
   css: {
-    cwd: 'lib',
     expand: true,
-    src: ['*.css', 'conductor-analytics-bootstrap.js'],
+    flatten: true,
+    src: ['stylesheets/*.css', 'lib/conductor-analytics-bootstrap.js'],
     dest: 'dist/'
   },
 

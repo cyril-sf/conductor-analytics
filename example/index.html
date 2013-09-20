@@ -2,29 +2,32 @@
 <html>
 <head>
   <script src="/conductor-0.3.0.js.html"></script>
-  <link rel="stylesheet" href="../conductor-analytics.css">
+  <link rel="stylesheet" href="../conductor-analytics-bootstrap.css">
   <script type="text/javascript" src="../conductor-analytics-bootstrap.js"></script>
   <script type="text/javascript" src="../jquery.js"></script>
 </head>
 <body>
 
-    <div class="analytics">
-      <div class="tab">Analytics</div>
-      <div class="panel">
-        <pre class="output"></pre>
-      </div>
+  <!-- Elements used for the Analytics tab -->
+  <div class="analytics">
+    <div class="tab">Analytics</div>
+    <div class="panel">
+      <pre class="output"></pre>
     </div>
+  </div>
 
   <script type="text/javascript">
     var conductor = new Conductor({
         conductorURL: '../conductor-0.3.0.js.html'
     });
 
+    /* Initialize the UI for analytics */
     initializeAnalyticsTab();
+    /* Instantiate the Conductor Analytics card */
     var analyticsCard = initializeConductorAnalytics( conductor, "../card.js", ".output" );
-
+    /* Load a card */
     var card = conductor.load("cards/render_card.js", 1);
-
+    /* Let the analytics card track this card */
     analyticsCard.track( card );
 
     card.appendTo('body');

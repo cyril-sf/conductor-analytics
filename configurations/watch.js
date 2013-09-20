@@ -4,6 +4,7 @@ module.exports = {
       'configurations/**',
       'lib/**',
       'templates/**',
+      'stylesheets/**',
       'test/**/*.js',
       'test/index.html',
       'vendor/*.js'

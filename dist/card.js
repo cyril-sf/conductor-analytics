@@ -52,14 +52,13 @@ define("app/controllers/index",
   [],
   function() {
     "use strict";
-    var IndexController = Ember.ArrayController.extend({
-      services: function() {
-        return this.store.all('service');
-      }.property('store'),
+    /* global $ */
 
-      cards: function() {
-        return this.store.all('card');
-      }.property('store')
+    var IndexController = Ember.ArrayController.extend({
+      toggleFilters: function() {
+        $('.filters').toggle();
+        $('#events').toggle();
+      }
     });
 
 
@@ -310,24 +309,28 @@ define("templates",
       var buffer = '', stack1, hashContexts, hashTypes, options, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
 
 
-      data.buffer.push("<div id=\"events\">\n<table>\n  <thead>\n    <tr>\n      <th class=\"time\">Time</th>\n      <th class=\"service\">Service</th>\n      <th class=\"direction\"></th>\n      <th class=\"event\">Event</th>\n      <th class=\"data\">Data</th>\n    </tr>\n  </thead>\n  ");
+      data.buffer.push("<div id=\"events\">\n  <table>\n    <thead>\n      <tr>\n        <th class=\"time\">Time</th>\n        <th class=\"service\">Service</th>\n        <th class=\"direction\"></th>\n        <th class=\"event\">Event</th>\n        <th class=\"data\">Data</th>\n      </tr>\n    </thead>\n    ");
       hashContexts = {'contentBinding': depth0};
       hashTypes = {'contentBinding': "STRING"};
       options = {hash:{
         'contentBinding': ("controller")
       },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
       data.buffer.push(escapeExpression(((stack1 = helpers.collection || depth0.collection),stack1 ? stack1.call(depth0, "App.EventsView", options) : helperMissing.call(depth0, "collection", "App.EventsView", options))));
-      data.buffer.push("\n</table>\n</div>\n\n<div id=\"services\">\n");
+      data.buffer.push("\n  </table>\n</div>\n\n<div class=\"filters\">\n  <div class=\"filter\">\n  ");
       hashTypes = {};
       hashContexts = {};
       options = {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
       data.buffer.push(escapeExpression(((stack1 = helpers.outlet || depth0.outlet),stack1 ? stack1.call(depth0, "services", options) : helperMissing.call(depth0, "outlet", "services", options))));
-      data.buffer.push("\n</div>\n\n<div id=\"cards\">\n");
+      data.buffer.push("\n  </div>\n\n  <div class=\"filter\">\n  ");
       hashTypes = {};
       hashContexts = {};
       options = {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
       data.buffer.push(escapeExpression(((stack1 = helpers.outlet || depth0.outlet),stack1 ? stack1.call(depth0, "cards", options) : helperMissing.call(depth0, "outlet", "cards", options))));
-      data.buffer.push("\n</div>\n");
+      data.buffer.push("\n  </div>\n</div>\n\n<div class=\"menu\">\n  <a ");
+      hashTypes = {};
+      hashContexts = {};
+      data.buffer.push(escapeExpression(helpers.action.call(depth0, "toggleFilters", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+      data.buffer.push(">Filters</a>\n</div>\n");
       return buffer;
   
     });
@@ -340,7 +343,7 @@ define("templates",
     function program1(depth0,data) {
   
       var buffer = '', stack1, stack2, hashContexts, hashTypes, options;
-      data.buffer.push("\n    <tr>\n      <td>");
+      data.buffer.push("\n    <tr>\n      <td class=\"service\">");
       hashContexts = {'type': depth0,'name': depth0,'checked': depth0};
       hashTypes = {'type': "STRING",'name': "ID",'checked': "ID"};
       options = {hash:{
@@ -349,7 +352,7 @@ define("templates",
         'checked': ("service.isVisible")
       },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
       data.buffer.push(escapeExpression(((stack1 = helpers.input || depth0.input),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "input", options))));
-      data.buffer.push("</td>\n      <td>");
+      data.buffer.push("</td>\n      <td class=\"service\">");
       hashTypes = {};
       hashContexts = {};
       data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "service.id", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
@@ -373,7 +376,7 @@ define("templates",
         'checked': ("eventType.isVisible")
       },contexts:[],types:[],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
       data.buffer.push(escapeExpression(((stack1 = helpers.input || depth0.input),stack1 ? stack1.call(depth0, options) : helperMissing.call(depth0, "input", options))));
-      data.buffer.push("</td>\n            <td>");
+      data.buffer.push("</td>\n            <td class=\"event\">");
       hashTypes = {};
       hashContexts = {};
       data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "eventType.id", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
@@ -381,7 +384,7 @@ define("templates",
       return buffer;
       }
 
-      data.buffer.push("<table>\n  <thead>\n    <tr>\n      <th colspan=2>Service</th>\n      <th> Event Type</th>\n    </tr>\n  </thead>\n  <tbody>\n  ");
+      data.buffer.push("<table>\n  <thead>\n    <tr>\n      <th class=\"service\" colspan=2>Service</th>\n      <th class=\"event\"> Event Type</th>\n    </tr>\n  </thead>\n  <tbody>\n  ");
       hashTypes = {};
       hashContexts = {};
       stack1 = helpers.each.call(depth0, "service", "in", "controller", {hash:{},inverse:self.noop,fn:self.program(1, program1, data),contexts:[depth0,depth0,depth0],types:["ID","ID","ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data});

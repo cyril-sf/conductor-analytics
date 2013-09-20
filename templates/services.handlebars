@@ -1,21 +1,21 @@
 <table>
   <thead>
     <tr>
-      <th colspan=2>Service</th>
-      <th> Event Type</th>
+      <th class="service" colspan=2>Service</th>
+      <th class="event"> Event Type</th>
     </tr>
   </thead>
   <tbody>
   {{#each service in controller}}
     <tr>
-      <td>{{input type="checkbox" name=service.id checked=service.isVisible}}</td>
-      <td>{{service.id}}</td>
+      <td class="service">{{input type="checkbox" name=service.id checked=service.isVisible}}</td>
+      <td class="service">{{service.id}}</td>
       <td>
         <table>
           {{#each eventType in service.eventTypes}}
           <tr>
             <td>{{input type="checkbox" name=eventType.id checked=eventType.isVisible}}</td>
-            <td>{{eventType.id}}</td>
+            <td class="event">{{eventType.id}}</td>
           </tr>
           {{/each}}
         </table>
