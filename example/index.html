@@ -24,7 +24,7 @@
     /* Initialize the UI for analytics */
     initializeAnalyticsTab();
     /* Instantiate the Conductor Analytics card */
-    var analyticsCard = initializeConductorAnalytics( conductor, "../card.js", ".output" );
+    var analyticsCard = initializeConductorAnalytics( conductor, "../card.js" );
     /* Load a card */
     var card = conductor.load("cards/render_card.js", 1);
     /* Let the analytics card track this card */
@@ -32,6 +32,9 @@
 
     card.appendTo('body');
     card.render();
+
+    analyticsCard.appendTo( ".output" );
+    analyticsCard.render('something', {width: 300, heigth: 150});
   </script>
 </body>
 </html>
