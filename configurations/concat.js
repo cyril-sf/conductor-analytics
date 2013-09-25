@@ -1,6 +1,11 @@
 module.exports = {
+  app: {
+    src: ['tmp/public/conductor-analytics/**/*.js'],
+    dest: 'tmp/public/app/app.js'
+  },
+
   main: {
-    src: ['tmp/public/conductor-analytics/**/*.js', 'lib/card.js'],
+    src: ['tmp/public/app/*.js', 'lib/card.js'],
     dest: 'dist/card.js'
   },
 

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="../conductor-analytics.css">
+  <script type="text/javascript" src="../loader.js"></script>
+  <script type="text/javascript" src="../jquery.js"></script>
+  <script type="text/javascript" src="../handlebars.js"></script>
+  <script type="text/javascript" src="../ember.js"></script>
+  <script type="text/javascript" src="../ember-data.js"></script>
+  <script type="text/javascript" src="../app/app.js"></script>
+  <script type="text/css">
+    body: {
+      background-color: black;
+    }
+
+    #analytics {
+      height: 328px;
+      border: 1px solid red;
+    }
+  </script>
+</head>
+<body>
+
+  <!-- Elements used for the Analytics tab -->
+  <div id="analytics">
+  </div>
+
+  <script type="text/javascript">
+    window.App = requireModule('app/application');
+    window.App.advanceReadiness();
+  </script>
+</body>
+</html>
+

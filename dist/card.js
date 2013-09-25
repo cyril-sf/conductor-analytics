@@ -1,6 +1,6 @@
 define("app/application",
-  ["app/routes/index","app/controllers/index","app/controllers/services","app/controllers/cards","app/views/events","app/views/event","app/models/service","app/models/event_type","app/models/event","app/models/card"],
-  function(IndexRoute, IndexController, ServicesController, CardsController, EventsView, EventView, Service, EventType, Event, Card) {
+  ["app/routes/index","app/controllers/index","app/routes/filters","app/routes/events","app/controllers/events","app/views/events","app/views/event","app/controllers/services","app/controllers/cards","app/models/service","app/models/event_type","app/models/event","app/models/card"],
+  function(IndexRoute, IndexController, FiltersRoute, EventsRoute, EventsController, EventsView, EventView, ServicesController, CardsController, Service, EventType, Event, Card) {
     "use strict";
 
     var App = Ember.Application.create({
@@ -13,14 +13,62 @@ define("app/application",
 
     App.IndexRoute = IndexRoute;
     App.IndexController = IndexController;
-    App.ServicesController = ServicesController;
-    App.CardsController = CardsController;
-    App.EventsView = EventsView;
+
+    App.EventsRoute = EventsRoute;
+    App.EventsController = EventsController;
+    App.EventsIndexView = EventsView; //TODO: this is a hack
     App.EventView = EventView;
 
-    App.Router.map( function() {
+    App.FiltersRoute = FiltersRoute;
 
+    App.ServicesController = ServicesController;
+    App.CardsController = CardsController;
+
+    App.Router.map( function() {
+      this.route("events");
+      this.route("filters");
     });
+
+    App.createEvent= function(time, service, event, cardId) {
+      var store = this.__container__.lookup('store:main'),
+          card;
+
+      if( store.hasRecordForId(App.Service, service) ) {
+        service = store.recordForId(App.Service, service);
+      } else {
+        service = store.createRecord('service', {
+          id: service,
+          isVisible: true
+        });
+      }
+
+      var eventTypes = service.get('eventTypes'),
+          eventType = eventTypes.findBy('id', event.type);
+      if( !eventType ) {
+        eventType = eventTypes.createRecord({
+          id: event.type,
+          isVisible: true
+        });
+      }
+
+      event = eventType.get('events').createRecord({
+        direction: event.direction,
+        data: (JSON.stringify(event.data) || ""),
+        time: time
+      });
+
+      if( store.hasRecordForId(App.Card, cardId) ) {
+        card = store.recordForId(App.Card, cardId);
+      } else {
+        card = store.createRecord('card', {
+          id: cardId,
+          isVisible: true
+        });
+      }
+      event.set('card', card);
+    };
+
+
 
     App.ApplicationAdapter = DS.RESTAdapter;
     App.Service = Service;
@@ -48,17 +96,23 @@ define("app/controllers/cards",
 
     return CardsController;
   });
+define("app/controllers/events",
+  [],
+  function() {
+    "use strict";
+    var EventsController = Ember.ArrayController.extend({
+    });
+
+
+    return EventsController;
+  });
 define("app/controllers/index",
   [],
   function() {
     "use strict";
     /* global $ */
 
-    var IndexController = Ember.ArrayController.extend({
-      toggleFilters: function() {
-        $('.filters').toggle();
-        $('#events').toggle();
-      }
+    var IndexController = Ember.ObjectController.extend({
     });
 
 
@@ -148,36 +202,68 @@ define("app/models/service",
 
     return Service;
   });
-define("app/routes/index",
+define("app/routes/events",
   [],
   function() {
     "use strict";
-    var IndexRoute = Ember.Route.extend({
-      setupController: function(controller, model) {
-        controller.set('model', model);
-
-        this.controllerFor('services').set('model', this.store.all('service') );
-        this.controllerFor('cards').set('model', this.store.all('card') );
-      },
-
+    var EventsRoute = Ember.Route.extend({
       model: function() {
         return this.store.all('event');
+      },
+
+      actions: {
+        switchRoutes: function() {
+          this.transitionTo('filters');
+        }
+      }
+    });
+
+
+    return EventsRoute;
+  });
+define("app/routes/filters",
+  [],
+  function() {
+    "use strict";
+    var FiltersRoute = Ember.Route.extend({
+      setupController: function() {
+        this.controllerFor('services').set('model', this.store.all('service') );
+        this.controllerFor('cards').set('model', this.store.all('card') );
       },
 
       renderTemplate: function() {
         this.render();
 
         this.render('services', {
-          into: 'index',
+          into: 'filters',
           outlet: 'services',
           controller: 'services'
         });
 
         this.render('cards', {
-          into: 'index',
+          into: 'filters',
           outlet: 'cards',
           controller: 'cards'
         });
+      },
+
+      actions: {
+        switchRoutes: function() {
+          this.transitionTo('events');
+        }
+      }
+    });
+
+
+    return FiltersRoute;
+  });
+define("app/routes/index",
+  [],
+  function() {
+    "use strict";
+    var IndexRoute = Ember.Route.extend({
+      redirect: function() {
+        this.transitionTo('events');
       }
     });
 
@@ -256,9 +342,16 @@ define("templates",
     Ember.TEMPLATES["application"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
     this.compilerInfo = [4,'>= 1.0.0'];
     helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
-      var buffer = '', hashTypes, hashContexts, escapeExpression=this.escapeExpression;
+      var buffer = '', hashContexts, hashTypes, escapeExpression=this.escapeExpression;
 
 
+      data.buffer.push("<div class=\"menu\">\n  <a ");
+      hashContexts = {'href': depth0};
+      hashTypes = {'href': "BOOLEAN"};
+      data.buffer.push(escapeExpression(helpers.action.call(depth0, "switchRoutes", {hash:{
+        'href': (true)
+      },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+      data.buffer.push(">Filters</a>\n</div>\n\n");
       hashTypes = {};
       hashContexts = {};
       data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "outlet", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
@@ -333,7 +426,7 @@ define("templates",
   
     });
 
-    Ember.TEMPLATES["index"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
+    Ember.TEMPLATES["events"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
     this.compilerInfo = [4,'>= 1.0.0'];
     helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
       var buffer = '', stack1, hashContexts, hashTypes, options, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
@@ -345,8 +438,19 @@ define("templates",
       options = {hash:{
         'contentBinding': ("controller")
       },contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
-      data.buffer.push(escapeExpression(((stack1 = helpers.collection || depth0.collection),stack1 ? stack1.call(depth0, "App.EventsView", options) : helperMissing.call(depth0, "collection", "App.EventsView", options))));
-      data.buffer.push("\n  </table>\n</div>\n\n<div class=\"filters\">\n  <div class=\"filter\">\n  ");
+      data.buffer.push(escapeExpression(((stack1 = helpers.collection || depth0.collection),stack1 ? stack1.call(depth0, "App.EventsIndexView", options) : helperMissing.call(depth0, "collection", "App.EventsIndexView", options))));
+      data.buffer.push("\n  </table>\n</div>\n");
+      return buffer;
+  
+    });
+
+    Ember.TEMPLATES["filters"] = Ember.Handlebars.template(function anonymous(Handlebars,depth0,helpers,partials,data) {
+    this.compilerInfo = [4,'>= 1.0.0'];
+    helpers = this.merge(helpers, Ember.Handlebars.helpers); data = data || {};
+      var buffer = '', stack1, hashTypes, hashContexts, options, helperMissing=helpers.helperMissing, escapeExpression=this.escapeExpression;
+
+
+      data.buffer.push("<div class=\"filters\">\n  <div class=\"filter\">\n  ");
       hashTypes = {};
       hashContexts = {};
       options = {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
@@ -356,11 +460,7 @@ define("templates",
       hashContexts = {};
       options = {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data};
       data.buffer.push(escapeExpression(((stack1 = helpers.outlet || depth0.outlet),stack1 ? stack1.call(depth0, "cards", options) : helperMissing.call(depth0, "outlet", "cards", options))));
-      data.buffer.push("\n  </div>\n</div>\n\n<div class=\"menu\">\n  <a ");
-      hashTypes = {};
-      hashContexts = {};
-      data.buffer.push(escapeExpression(helpers.action.call(depth0, "toggleFilters", {hash:{},contexts:[depth0],types:["STRING"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
-      data.buffer.push(">Filters</a>\n</div>\n");
+      data.buffer.push("\n  </div>\n</div>\n");
       return buffer;
   
     });
@@ -493,46 +593,6 @@ Conductor.card( {
     this.App = requireModule('app/application');
   },
 
-  createEvent: function(time, service, event, cardId) {
-    var App = this.App,
-        store = App.__container__.lookup('store:main'),
-        card;
-
-    if( store.hasRecordForId(App.Service, service) ) {
-      service = store.recordForId(App.Service, service);
-    } else {
-      service = store.createRecord('service', {
-        id: service,
-        isVisible: true
-      });
-    }
-
-    var eventTypes = service.get('eventTypes'),
-        eventType = eventTypes.findBy('id', event.type);
-    if( !eventType ) {
-      eventType = eventTypes.createRecord({
-        id: event.type,
-        isVisible: true
-      });
-    }
-
-    event = eventType.get('events').createRecord({
-      direction: event.direction,
-      data: (JSON.stringify(event.data) || ""),
-      time: time
-    });
-
-    if( store.hasRecordForId(App.Card, cardId) ) {
-      card = store.recordForId(App.Card, cardId);
-    } else {
-      card = store.createRecord('card', {
-        id: cardId,
-        isVisible: true
-      });
-    }
-    event.set('card', card);
-  },
-
   consumers: {
     dom: DomConsumer,
     analytics: Conductor.Oasis.Consumer.extend({
@@ -546,7 +606,7 @@ Conductor.card( {
 
           card.waitForActivation().then( function() {
             card.App.readyPromise.promise.then( function() {
-              card.createEvent(time, service, event, cardId);
+              card.App.createEvent(time, service, event, cardId);
             });
           });
         }

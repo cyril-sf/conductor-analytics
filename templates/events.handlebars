@@ -9,20 +9,6 @@
         <th class="data">Data</th>
       </tr>
     </thead>
-    {{collection App.EventsView contentBinding='controller'}}
+    {{collection App.EventsIndexView contentBinding='controller'}}
   </table>
-</div>
-
-<div class="filters">
-  <div class="filter">
-  {{ outlet 'services' }}
-  </div>
-
-  <div class="filter">
-  {{ outlet 'cards' }}
-  </div>
-</div>
-
-<div class="menu">
-  <a {{action 'toggleFilters'}}>Filters</a>
 </div>
