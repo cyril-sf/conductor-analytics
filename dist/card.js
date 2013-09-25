@@ -209,11 +209,41 @@ define("app/views/events",
   ["app/views/event"],
   function(EventView) {
     "use strict";
+    /*global $ */
 
     var EventsView = Ember.CollectionView.extend({
       tagName: 'tbody',
       itemViewClass: EventView,
-      contentBinding: 'controller'
+      autoScroll: true,
+
+      arrayWillChange: function() {
+        var $body = $('body'),    //TODO: this should not be here
+            atBottom = ($body.scrollTop() === ($body[0].scrollHeight - $body.height()));
+
+        this.set('autoScroll', atBottom);
+
+        this._super.apply(this, arguments);
+      },
+
+      arrayDidChange: function() {
+        Ember.run.scheduleOnce(
+          'afterRender',
+          this,
+          'resetScroll'
+        );
+
+        this._super.apply(this, arguments);
+      },
+
+      resetScroll: function (scrollHeight) {
+        var $body;    //TODO: this should not be here
+
+        if( this.get('autoScroll') ) {
+          $body = $('body');
+
+          $('body').scrollTop( $body[0].scrollHeight );
+        }
+      }
     });
 
 
@@ -451,7 +481,9 @@ Conductor.card( {
   App: null,
 
   initializeDOM: function () {
-    document.body.innerHTML = "<div id=\"analytics\"></div>";
+    var analyticsDiv = document.createElement('div');
+    analyticsDiv.setAttribute('id', 'analytics');
+    document.body.appendChild( analyticsDiv );
     this.App.advanceReadiness();
   },
 

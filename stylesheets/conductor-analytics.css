@@ -1,3 +1,12 @@
+#analytics {
+  height: 328px;
+}
+
+#events {
+  overflow-y: hidden;
+  overflow-x: auto;
+}
+
 .time {
   color: #aa0;
   white-space: nowrap;
