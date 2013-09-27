@@ -208,7 +208,11 @@ define("app/routes/events",
     "use strict";
     var EventsRoute = Ember.Route.extend({
       model: function() {
-        return this.store.all('event');
+        return this.store.filter('event', function(event) {
+          var eventType = event.get('eventType');
+
+          return eventType.get('isVisible') && eventType.get('service.isVisible') && event.get('card.isVisible');
+        });
       },
 
       actions: {
@@ -279,9 +283,9 @@ define("app/views/event",
       tagName: 'tr',
       classNames: ['event'],
 
-      isVisible: function() {
-        return this.get('content.eventType.isVisible') && this.get('content.eventType.service.isVisible') && this.get('content.card.isVisible');
-      }.property('content.eventType.isVisible', 'content.eventType.service.isVisible', 'content.card.isVisible'),
+      eventData: function() {
+        return this.get('content.data').slice(0, 100);
+      }.property('content.data'),
 
       direction: function() {
         return (this.get('content.direction') === "sent" ? "→" : "←");
@@ -420,7 +424,7 @@ define("templates",
       data.buffer.push("</td>\n<td class=\"data\">");
       hashTypes = {};
       hashContexts = {};
-      data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "view.content.data", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
+      data.buffer.push(escapeExpression(helpers._triageMustache.call(depth0, "view.eventData", {hash:{},contexts:[depth0],types:["ID"],hashContexts:hashContexts,hashTypes:hashTypes,data:data})));
       data.buffer.push("</td>\n");
       return buffer;
   
