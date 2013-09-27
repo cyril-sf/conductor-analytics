@@ -25,7 +25,7 @@ define("conductor/analytics/card/application",
       this.route("filters");
     });
 
-    App.createEvent= function(time, service, event, cardId) {
+    App.createEvent = function(time, service, event, cardId) {
       var store = this.__container__.lookup('store:main'),
           card;
 
@@ -106,8 +106,6 @@ define("conductor/analytics/card/controllers/index",
   [],
   function() {
     "use strict";
-    /* global $ */
-
     var IndexController = Ember.ObjectController.extend({
     });
 
