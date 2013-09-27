@@ -2,7 +2,7 @@ module.exports = {
   css: {
     expand: true,
     flatten: true,
-    src: ['stylesheets/*.css', 'lib/conductor-analytics-bootstrap.js'],
+    src: ['stylesheets/*.css'],
     dest: 'dist/'
   },
 

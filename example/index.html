@@ -17,14 +17,13 @@
   </div>
 
   <script type="text/javascript">
-    var conductor = new Conductor({
-        conductorURL: '../conductor-0.3.0.js.html'
-    });
+    var conductor = new Conductor({ conductorURL: '../conductor-0.3.0.js.html' }),
+        analyticsCardBootstrap = requireModule("conductor/analytics/bootstrap");
 
     /* Initialize the UI for analytics */
-    initializeAnalyticsTab();
+    analyticsCardBootstrap.initializeAnalyticsTab();
     /* Instantiate the Conductor Analytics card */
-    var analyticsCard = initializeConductorAnalytics( conductor, "../card.js" );
+    var analyticsCard = analyticsCardBootstrap.initializeConductorAnalytics( conductor, "../card.js" );
     /* Load a card */
     var card = conductor.load("cards/render_card.js", 1);
     /* Let the analytics card track this card */

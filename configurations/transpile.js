@@ -9,6 +9,18 @@ module.exports = {
     }]
   },
 
+  bootstrap: {
+    type: "amd",
+    moduleName: 'conductor/analytics/bootstrap',
+    files: [{
+      expand: true,
+      cwd: 'lib/',
+      moduleName: 'conductor/analytics/bootstrap',
+      src: ['conductor-analytics-bootstrap.js'],
+      dest: 'dist/'
+    }]
+  },
+
   tests: {
     type: "amd",
     files: [{
