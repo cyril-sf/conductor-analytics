@@ -4,11 +4,7 @@ define("conductor/analytics/card/application",
     "use strict";
 
     var App = Ember.Application.create({
-      readyPromise: Ember.RSVP.defer(),
-      rootElement: '#analytics',
-      ready: function() {
-        this.readyPromise.resolve();
-      }
+      rootElement: '#analytics'
     });
 
     App.IndexRoute = IndexRoute;
@@ -564,7 +560,7 @@ Conductor.card( {
               time = data.time;
 
           card.waitForActivation().then( function() {
-            card.App.readyPromise.promise.then( function() {
+            card.App.then( function() {
               card.App.createEvent(time, service, event, cardId);
             });
           });
