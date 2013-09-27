@@ -6,7 +6,10 @@ module.exports = {
       cwd: 'lib/',
       src: ['app/**/*.js'],
       dest: 'tmp/public/conductor-analytics'
-    }]
+    }],
+    moduleName: function(moduleName) {
+      return moduleName.replace(/^app\//, "conductor/analytics/card/");
+    }
   },
 
   bootstrap: {
@@ -38,6 +41,7 @@ module.exports = {
 
   templates: {
     type: "amd",
+    moduleName: 'conductor/analytics/card/templates',
     files: [{
       expand: true,
       cwd: 'tmp/public/',

@@ -1,5 +1,5 @@
-define("app/application",
-  ["app/routes/index","app/controllers/index","app/routes/filters","app/routes/events","app/controllers/events","app/views/events","app/views/event","app/controllers/services","app/controllers/cards","app/models/service","app/models/event_type","app/models/event","app/models/card"],
+define("conductor/analytics/card/application",
+  ["conductor/analytics/card/routes/index","conductor/analytics/card/controllers/index","conductor/analytics/card/routes/filters","conductor/analytics/card/routes/events","conductor/analytics/card/controllers/events","conductor/analytics/card/views/events","conductor/analytics/card/views/event","conductor/analytics/card/controllers/services","conductor/analytics/card/controllers/cards","conductor/analytics/card/models/service","conductor/analytics/card/models/event_type","conductor/analytics/card/models/event","conductor/analytics/card/models/card"],
   function(IndexRoute, IndexController, FiltersRoute, EventsRoute, EventsController, EventsView, EventView, ServicesController, CardsController, Service, EventType, Event, Card) {
     "use strict";
 
@@ -77,7 +77,7 @@ define("app/application",
     App.Event = Event;
 
     App.deferReadiness();
-    requireModule('templates');
+    requireModule('conductor/analytics/card/templates');
 
     //TODO: This is bad.
     //I'm doing something wrong when inserting the `App.EventsView` in the `index` template
@@ -86,7 +86,7 @@ define("app/application",
 
     return App;
   });
-define("app/controllers/cards",
+define("conductor/analytics/card/controllers/cards",
   [],
   function() {
     "use strict";
@@ -96,7 +96,7 @@ define("app/controllers/cards",
 
     return CardsController;
   });
-define("app/controllers/events",
+define("conductor/analytics/card/controllers/events",
   [],
   function() {
     "use strict";
@@ -106,7 +106,7 @@ define("app/controllers/events",
 
     return EventsController;
   });
-define("app/controllers/index",
+define("conductor/analytics/card/controllers/index",
   [],
   function() {
     "use strict";
@@ -118,7 +118,7 @@ define("app/controllers/index",
 
     return IndexController;
   });
-define("app/controllers/services",
+define("conductor/analytics/card/controllers/services",
   [],
   function() {
     "use strict";
@@ -128,7 +128,7 @@ define("app/controllers/services",
 
     return ServicesController;
   });
-define("app/models/card",
+define("conductor/analytics/card/models/card",
   [],
   function() {
     "use strict";
@@ -140,7 +140,7 @@ define("app/models/card",
 
     return Card;
   });
-define("app/models/event",
+define("conductor/analytics/card/models/event",
   [],
   function() {
     "use strict";
@@ -177,7 +177,7 @@ define("app/models/event",
 
     return Event;
   });
-define("app/models/event_type",
+define("conductor/analytics/card/models/event_type",
   [],
   function() {
     "use strict";
@@ -190,7 +190,7 @@ define("app/models/event_type",
 
     return EventType;
   });
-define("app/models/service",
+define("conductor/analytics/card/models/service",
   [],
   function() {
     "use strict";
@@ -202,7 +202,7 @@ define("app/models/service",
 
     return Service;
   });
-define("app/routes/events",
+define("conductor/analytics/card/routes/events",
   [],
   function() {
     "use strict";
@@ -225,7 +225,7 @@ define("app/routes/events",
 
     return EventsRoute;
   });
-define("app/routes/filters",
+define("conductor/analytics/card/routes/filters",
   [],
   function() {
     "use strict";
@@ -261,7 +261,7 @@ define("app/routes/filters",
 
     return FiltersRoute;
   });
-define("app/routes/index",
+define("conductor/analytics/card/routes/index",
   [],
   function() {
     "use strict";
@@ -274,7 +274,7 @@ define("app/routes/index",
 
     return IndexRoute;
   });
-define("app/views/event",
+define("conductor/analytics/card/views/event",
   [],
   function() {
     "use strict";
@@ -295,8 +295,8 @@ define("app/views/event",
 
     return EventView;
   });
-define("app/views/events",
-  ["app/views/event"],
+define("conductor/analytics/card/views/events",
+  ["conductor/analytics/card/views/event"],
   function(EventView) {
     "use strict";
     /*global $ */
@@ -339,7 +339,7 @@ define("app/views/events",
 
     return EventsView;
   });
-define("templates",
+define("conductor/analytics/card/templates",
   [],
   function() {
     "use strict";
@@ -537,50 +537,6 @@ Conductor.require('ember.js');
 Conductor.require('ember-data.js');
 Conductor.requireCSS('conductor-analytics.css');
 
-var DomConsumer = Conductor.Oasis.Consumer.extend({
-  _wait: function(card) {
-    var promise, obj = {}, helperName;
-
-    return new Conductor.Oasis.RSVP.Promise(function(resolve) {
-      var watcher = setInterval(function() {
-        var routerIsLoading = card.App.__container__.lookup('router:main').router.isLoading;
-        if (routerIsLoading) { return; }
-        if (Ember.run.hasScheduledTimers() || Ember.run.currentRunLoop) { return; }
-        clearInterval(watcher);
-        Ember.run(function() {
-          resolve();
-        });
-      }, 10);
-    });
-  },
-
-  requests: {
-    text:  function(selector) {
-      var card = this.card,
-          consumer = this;
-
-      return Conductor.Oasis.RSVP.Promise(function(resolve, reject){
-        consumer._wait( this.card ) .then( function() {
-          resolve( $(selector).text() );
-        });
-      });
-    },
-
-    length: function(selector) {
-      var card = this.card,
-          consumer = this;
-
-      return Conductor.Oasis.RSVP.Promise(function(resolve, reject){
-        card.waitForActivation().then( function() {
-          consumer._wait( card ).then( function() {
-            resolve( $(selector).length );
-          });
-        });
-      });
-    }
-  }
-});
-
 Conductor.card( {
   App: null,
 
@@ -594,11 +550,10 @@ Conductor.card( {
   activate: function() {
     this.consumers.height.autoUpdate = false;
     oasis.configure('eventCallback', Ember.run);
-    this.App = requireModule('app/application');
+    this.App = requireModule('conductor/analytics/card/application');
   },
 
   consumers: {
-    dom: DomConsumer,
     analytics: Conductor.Oasis.Consumer.extend({
       events: {
         printWiretapEvent: function(data) {
