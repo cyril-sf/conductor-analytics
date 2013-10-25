@@ -1,5 +1,5 @@
 /*global visit, find */
-import App from 'app/application';
+import App from 'conductor/analytics/card/application';
 
 var qunitFixture = document.getElementById('qunit-fixture');
 
@@ -9,7 +9,7 @@ App.injectTestHelpers();
 module("Ember application tests", {
   setup: function() {
     var rootElement = document.createElement( 'div' );
-    rootElement.setAttribute( "id", "card" );
+    rootElement.setAttribute( "id", "analytics" );
     qunitFixture.appendChild( rootElement );
 
     App.reset();
