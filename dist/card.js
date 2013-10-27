@@ -522,13 +522,15 @@ define("conductor/analytics/card/templates",
   
     });
   });
-/*global Conductor, $, oasis */
+/*global Conductor, oasis */
 
 Conductor.require('jquery.js');
 Conductor.require('handlebars.js');
 Conductor.require('ember.js');
 Conductor.require('ember-data.js');
 Conductor.requireCSS('conductor-analytics.css');
+
+var RSVP = Conductor.Oasis.RSVP;
 
 Conductor.card( {
   App: null,
@@ -564,8 +566,8 @@ Conductor.card( {
           card.waitForActivation().then( function() {
             card.App.then( function() {
               card.App.createEvent(time, service, event, cardId);
-            });
-          });
+            }).fail(RSVP.rethrow);
+          }).fail(RSVP.rethrow);
         }
       }
     })
