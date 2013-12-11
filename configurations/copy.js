@@ -26,6 +26,18 @@ module.exports = {
     }
   ]},
 
+  testsVendor: {
+    expand: true,
+    cwd: 'bower_components',
+    src: [
+      'almond/almond.js',
+      'qunit/qunit/*',
+      'jquery/jquery.js'
+    ],
+    flatten: true,
+    dest: 'tmp/public/'
+  },
+
   vendor: {
     files: [
       {
