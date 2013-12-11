@@ -6,6 +6,13 @@ module.exports = {
     dest: 'dist/'
   },
 
+  bootstrap: {
+    expand: true,
+    flatten: true,
+    src: ['lib/*.html'],
+    dest: 'dist/'
+  },
+
   card: {
     files: [
     {

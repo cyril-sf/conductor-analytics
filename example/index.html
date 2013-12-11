@@ -23,9 +23,9 @@
     /* Initialize the UI for analytics */
     analyticsCardBootstrap.initializeAnalyticsTab();
     /* Instantiate the Conductor Analytics card */
-    var analyticsCard = analyticsCardBootstrap.initializeConductorAnalytics( conductor, "../card.js" );
+    var analyticsCard = analyticsCardBootstrap.initializeConductorAnalytics( conductor, "../card.html" );
     /* Load a card */
-    var card = conductor.load("cards/render_card.js", 1);
+    var card = conductor.load("cards/render_card.html", 1);
     /* Let the analytics card track this card */
     analyticsCard.track( card );
 
